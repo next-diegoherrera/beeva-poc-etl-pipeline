@@ -7,6 +7,10 @@ En este repositorio se ofrecen los pasos necesarios para reproducir la POC:
 - Instrucciones del [proceso ETL sobre AWS](./aws/README.md).
 - Instrucciones del [proceso ETL sobre GCP](./gcp/README.md).
 
+También se adjuntan las slides de la presentación:
+
+- [Slides](https://docs.google.com/presentation/d/1bo-8LXZLz1cu2fG_BJBZnylp-uWNSpllWK3mgQTmiDc)
+
 ## Autores
 
 En esta POC han participado las siguientes personas:
