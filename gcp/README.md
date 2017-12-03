@@ -9,6 +9,10 @@ TBD
 * [Trabajando el ETL](#trabajando-el-etl)
     * [Uniendo los datasets](#uniendo-los-datasets)
     * [Normalizando los datos](#normalizando-los-datos)
+        * [Eliminando columnas innecesarias](#eliminando-columnas-innecesarias)
+        * [Normalizando la columna ALIVE](#normalizando-la-columna-alive)
+        * [Normalizando la columna APPEARANCES](#normalizando-la-columna-appearances)
+    * [Exportando los datos](#exportando-los-datos)
 
 ## Creando el proyecto en GCP
 
@@ -157,4 +161,61 @@ Este primer paso del ETL termina. Vamos con el siguiente.
 
 ### Normalizando los datos
 
-TBD
+Esta segunda receta que vamos a crear irá destinada a la normalización de los datos. Podríamos dividir las transformaciones en distintas recetas, pero son lo suficientemente sencillas como para hacerlas como pasos de una misma receta.
+
+Aprovechando que ya sabemos cómo trabajar con recetas, vamos a crear una nueva para _cocinar_ los datos del dataset resultante del [paso anterior](#uniendo-los-datasets). Una vez creada, la editamos y añadimos los siguientes pasos.
+
+#### Eliminando columnas innecesarias
+
+Vamos a eliminar del dataset aquellas columnas que no aporten valor alguno en esta POC. Esto se hace aplicando la transformación **drop** en el panel **Recipe** de la vista de receta. Las columnas que debemos seleccionar son las siguientes:
+
+* page_id
+* urlslug
+* GSM
+* FIRST_APPEARANCE
+
+Este primer paso de la receta debería tener un aspecto similar al siguiente:
+
+![Image: Drop](assets/images/31-dataprep-etl.png "Drop")
+
+Vamos a por los siguientes.
+
+#### Normalizando la columna ALIVE
+
+Los pasos que continuan la receta están destinados a poner orden en la columna **ALIVE**. Esta columna muestra qué superheroes del dataset están vivos y qué superheroes no lo están, pero en vez de hacerlo con un tipo de dato **booleano** lo hace con un tipo **string**. Lo que haremos será cambiar el tipo de dato de esta columna para trabajar más cómodamente con los datos que conteniene. Añadiremos los siguientes pasos:
+
+* Transformación **replace** para cambiar el valor **Living Characters** de la columna **ALIVE** por **True**.
+
+![Image: Replace](assets/images/32-dataprep-etl.png "Replace")
+
+* Transformación **replace** para cambiar el valor **Deceased Characters** de la columna **ALIVE** por **False**.
+
+![Image: Replace](assets/images/33-dataprep-etl.png "Replace")
+
+* Transformación **settype** para cambiar el tipo de dato de la columna a **Bool**. Podemos añadir, como hasta ahora, la transformación de manera manual, pero podemos aprovechar para hacerlo desde la cabecera de la columna y así practicar esta funcionalidad.
+
+![Image: SetType](assets/images/34-dataprep-etl.png "SetType")
+
+Llegados a este punto, deberíamos tener los siguientes pasos en la receta.
+
+![Image: Recipe](assets/images/35-dataprep-etl.png "Recipe")
+
+Continuamos, que ya queda poco.
+
+#### Normalizando la columna APPEARANCES
+
+La columna **APPEARANCES** muestra el número de veces que un superheroes hace acto de presencia en los cómics. El problema es que, en caso de no haber aparecido aún en ninguno, el valor en la columna aparece como una cadena vacía, cuando lo ideal es que fuese el número **0**. Podemos arreglarlo rápidamente con la transformación **replace**.
+
+![Image: Replace](assets/images/36-dataprep-etl.png "Replace")
+
+Y ya que estamos, nos asguramos de que el tipo de la columna sea **Integer**.
+
+![Image: Replace](assets/images/37-dataprep-etl.png "Replace")
+
+La receta debe tener este aspecto.
+
+![Image: Recipe](assets/images/38-dataprep-etl.png "Recipe")
+
+Ahora sí, los datos están tal y como los necesitamos para esta POC. Podemos proceder ya con la exportación.
+
+### Exportando los datos
