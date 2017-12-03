@@ -13,6 +13,8 @@ TBD
         * [Normalizando la columna ALIVE](#normalizando-la-columna-alive)
         * [Normalizando la columna APPEARANCES](#normalizando-la-columna-appearances)
     * [Exportando los datos](#exportando-los-datos)
+        * [Preparando BigQuery](#preparando-bigquery)
+        * [Creando el job de exportación](#creando-el-job-de-exportacion)
 
 ## Creando el proyecto en GCP
 
@@ -219,3 +221,87 @@ La receta debe tener este aspecto.
 Ahora sí, los datos están tal y como los necesitamos para esta POC. Podemos proceder ya con la exportación.
 
 ### Exportando los datos
+
+Los datos van a exportarse a una tabla de **BigQuery**. Antes de ponernos con ello, debemos preparar este servicio creando un nuevo dataset. En **BigQuery**, las tablas se almacenan en datasets y actualmente no tenemos ninguno disponible; de ahí la necesidad de esta primera parada en la exportación.
+
+#### Preparando BigQuery
+
+Vamos a **BigQuery** y desplegamos el menú contextual de opciones del proyecto **superheroes** para crear un nuevo dataset; la opción que hace la magia es **Create new dataset**.
+
+![Image: Create new dataset](assets/images/39-data-export.png "Create new dataset")
+
+En la ventana modal que aparece, indicamos un nombre para el dataset y aceptamos.
+
+![Image: Create Dataset](assets/images/40-data-export.png "Create Dataset")
+
+El dataset se crea en un instante y aparece bajo el proyecto, en la zona izquierda de la interfaz. Esto debería ser suficiente para hacer la exportación de los datos de superheroes desde **Dataprep**, pero por alguna razón desconocida -suponemos que por estar aún en fase beta- nos toca hacer un paso más.
+
+**Dataprep** no es capaz de escribir una nueva tabla sobre un dataset vacío, así que vamos a crear una tabla _dummy_ -señor hack- para evitar este problema. En **BigQuery**, junto al nombre del dataset que hemos creado hace un momento, aparece un pequeño botón con el signo **+** que facilita la creación de nuevas tablas.
+
+![Image: Create Table](assets/images/41-data-export.png "Create Table")
+
+Lo pulsamos y creamos una tabla con la siguiente configuración.
+
+![Image: Create Table](assets/images/42-data-export.png "Create Table")
+
+Ahora sí, ya podemos proceder con la exportación desde **Dataprep**.
+
+#### Creando el job de exportación
+
+Volviendo a **Dataprep**, echamos un ojo a nuestro flujo. Editamos los nombres de los datasets y elegimos unos más acordes a los datos que contienen. Deberíamos tener un flujo similar al siguiente.
+
+![Image: Flow](assets/images/43-data-export.png "Flow")
+
+Es hora de preparar el job de exportación del dataset **dc-marvel-final**. Para hacerlo, lo seleccionamos y hacemos clic sobre el botón **Run Job** que aparece en el panel de detalles del dataset, en la zona derecha.
+
+![Image: Run Job](assets/images/44-data-export.png "Run Job")
+
+Por defecto, **Dataprep** viene configurado para hacer la publicación -exportación- de los datos en **Storage**, pero nosotros vamos a cambiarlo para que lo haga en **BigQuery**. En la vista **Run Job on Dataflow**, eliminamos la publicación que aparece y creamos una nueva desde el botón **Add Publishing Action**.
+
+![Image: Run Job on Dataflow](assets/images/45-data-export.png "Run Job on Dataflow")
+
+Configuramos la **Publishing Action** seleccionamos el dataset de **BigQuery** que creamos [más arriba](#preparando-bigquery). Seguidamente, indicamos que queremos crear una nueva tabla para la publicación haciendo clic en el botón **Create a new table**.
+
+![Image: Publishing Action](assets/images/46-data-export.png "Publishing Action")
+
+Revisamos el nombre de la tabla e indicamos a **Dataprep** que cada publicación del dataset debe crear una nueva. Es importante evaluar las opciones ofrecidas para ver cuál de ellas se ajusta más a cada caso; para esta POC, replicar datos en distintas tablas es la opción más acertada, ya que podemos comparar publicaciones en caso de modificar el ETL de los datos. Guardamos la configuración con el botón **Save Settings**.
+
+![Image: Create a new table](assets/images/47-data-export.png "Create a new table")
+
+De nuevo en la vista **Run Job on Dataflow**, verificamos que la publicación sea la correcta y pulsamos el botón **Run Job**.
+
+![Image: Run Job](assets/images/48-data-export.png "Run Job")
+
+Se nos lleva a la sección de **Jobs** donde podemos ver el estado de la publicación que acabamos de lanzar.
+
+![Image: Jobs](assets/images/49-data-export.png "Jobs")
+
+El servicio encargado de ejecutar el flujo de transformaciones definido sobre los conjuntos de datos es **Dataflow**. Podemos dirigirnos a este a este servicio para ver en tiempo real cómo se van ejecutando las transformaciones desde el menú contextual del job, en la opción **Cloud Dataflow Job**.
+
+![Image: Cloud Dataflow Job](assets/images/50-data-export.png "Cloud Dataflow Job")
+
+**Dataflow** muestra mucha información de valor relacionada con el job que está ejecutando. Por ejemplo, podemos ver el grafo del plan de ejecución de las transformaciones.
+
+![Image: Job Graph](assets/images/51-data-export.png "Job Graph")
+
+También, un resumen con los principales datos del job.
+
+![Image: Job Summary](assets/images/52-data-export.png "Job Summary")
+
+Métricas de los recursos de hardware que **Dataflow** ha aprovisionado para la ejecución del job.
+
+![Image: Resource Metrics](assets/images/53-data-export.png "Resource Metrics")
+
+O el socorrido y siempre útil log de acciones.
+
+![Image: Job Logs](assets/images/54-data-export.png "Job Logs")
+
+Una vez el job ha terminado, podemos consultar los resultados detallados de la aplicación de las transformaciones. Para ello, hacemos clic sobre el botón **View Results** del job.
+
+![Image: View Results](assets/images/55-data-export.png "View Results")
+
+Se nos muestran los resultados.
+
+![Image: Job Logs](assets/images/56-data-export.png "Job Logs")
+
+Hasta aquí la ejecución del job. Podemos ir a **BigQuery** para verificar que los datos se han escrito correctamente en la tabla que indicamos.
