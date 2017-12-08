@@ -14,7 +14,8 @@ TBD
         * [Normalizando la columna APPEARANCES](#normalizando-la-columna-appearances)
     * [Exportando los datos](#exportando-los-datos)
         * [Preparando BigQuery](#preparando-bigquery)
-        * [Creando el job de exportación](#creando-el-job-de-exportacion)
+        * [Creando el job de exportación](#creando-el-job-de-exportación)
+* [Visualizando el resultado](#visualizando-el-resultado)
 
 ## Creando el proyecto en GCP
 
@@ -305,3 +306,73 @@ Se nos muestran los resultados.
 ![Image: Job Logs](assets/images/56-data-export.png "Job Logs")
 
 Hasta aquí la ejecución del job. Podemos ir a **BigQuery** para verificar que los datos se han escrito correctamente en la tabla que indicamos.
+
+## Visualizando el resultado
+
+Una vez que tenemos los datos ya _cocinados_ en BigQuery, vamos a visualizarlos con [Data Studio](https://datastudio.google.com/), una herramienta para crear cuadros de mando e informes interactivos de Google.
+
+Nos dirigimos al site de la herramienta y hacemos clic en el botón **Start a new report** de tipo **blank**, en el centro de la pantalla.
+
+![Image: Start a new report](assets/images/57-data-visualization.png "Start a new report")
+
+Esto creará un nuevo informe en blanco. Seguidamente, el navegador nos lleva a la edición del informe, donde lo primero que haremos será darle un nombre _decente_ haciendo clic sobre el texto que aparece por defecto.
+
+![Image: Report name](assets/images/58-data-visualization.png "Report name")
+
+Lo siguiente que haremos será elegir el origen de los datos. **Data Studio** ofrece algunas muestras de ejemplo para _jugar_ con ellas, pero nos iremos directos a seleccionar la tabla de **BigQuery** donde exportamos los datos de superheroes de la POC.
+
+En el panel lateral derecho, donde se muestran los datasets de prueba, aparece también un botón titulado **Create new data source**. Lo pulsamos.
+
+![Image: Create new data source](assets/images/59-data-visualization.png "Create new data source")
+
+Se nos lleva a la vista de creación de orígenes de datos. Le damos un título acorde a la situación y seleccionamos secuancialemente el conector **BigQuery**, el proyecto GCP sobre el que hemos estado trabajando, el dataset **dataprep** y la tabla **dc_marvel_final**. Si alguno de esos datos no se corresponde con los tuyos, elige los que apliquen. Para finalizar, pulsamos el botón **Connect**.
+
+![Image: Connect](assets/images/60-data-visualization.png "Connect")
+
+**Data Studio** es capaz de interpretar automáticamente el tipo de los datos que hemos conectado. Lo muestra en una tabla similar a la siguiente, donde podemos tanto cambiar los tipos de datos mal detectados como establecer funciones de agregación en aquellas columnas que lo permitan. Cuando lo tengamos listo, añadimos el origen de datos al informe desde el botón **Add to report**.
+
+![Image: Add to report](assets/images/61-data-visualization.png "Add to report")
+
+Y confirmamos en el diálogo modal.
+
+![Image: Add to report](assets/images/62-data-visualization.png "Add to report")
+
+Vamos a añadir una gráfica para familiarizarnos con la interfaz de **Data Studio**. Esta gráfica va a mostrar cómo está distribuido el género de los personajes que figuran en el dataset.
+
+En la barra de herramientas superior tenemos diversas opciones de gráficas: vamos a elegir una **Pie chart**, que es el _gráfico de tarta_ clásico.
+
+![Image: Pie chart](assets/images/63-data-visualization.png "Pie chart")
+
+Cuando la seleccionemos, debemos elegir el tamaño y posición que ocupará dentro del informe. Lo haremos con el ratón, manteniendo pulsado el botón izquierdo mientras se arrastra. Una vez dibujada la gráfica, en la zona derecha se habilitará un panel de propiedades; desde aquí podremos configurar tanto los datos que mostrará la gráfica como el aspecto estético de la misma.
+
+En la pestaña **Data**, marcamosla columna **SEX** como **Dimension** y ordenamos los resultados de manera ascendente también por **SEX**.
+
+![Image: Pie chart properties](assets/images/64-data-visualization.png "Pie chart properties")
+
+La gráfica se habrá actualizado con los datos de género. Si nos fijamos bien, hay un género que aparece vacío, sin nombre: representa el sumatorio de aquellos géneros que son nulos -cadena vacía, concretamente-. Si queremos evitar que aparezcan en la gráfica, debemos filtrar el dataset.
+
+Desde el panel de propiedades de la gráfica, en la pestaña **Data**, pulsamos el botón **Add a filter**.
+
+![Image: Add a filter](assets/images/65-data-visualization.png "Add a filter")
+
+Se nos despliega el panel de edición de filtro en la parte inferior. Indicamos un nombre y añadimos un filtro que excluya las filas cuya celda **SEX** esté vacía. Esto podemos hacerlo fácilmente con la expresión regular **/$^/**. En **Data Studio** no es necesario indicar las **/** en las regex.
+
+![Image: Edit Filter](assets/images/66-data-visualization.png "Edit Filter")
+
+Es el momento de jugar con la estética de la gráfica. En el panel de propiedades, vamos a la pestaña **Style** y hacemos lo siguiente: establecemos un solo color para resaltar las distintas zonas de la gráfica, y hacemos un _donut_ con ella aumentando el tamaño del agujero central desde el slide habilitado para ello.
+
+![Image: Style](assets/images/67-data-visualization.png "Style")
+
+Deberíamos tener algo parecido a lo siguiente:
+
+![Image: Report](assets/images/68-data-visualization.png "Report")
+
+Tal y como hemos hecho con esta gráfica, podemos probar otras de las que se ofrecen cambiando los datos que representan, los filtros, agregaciones, estilos, etc.
+
+Cuando se haya finalizado la edición del informe, podemos pasar al modo vista desde el botón **View**, situado en la parte superior derecha de la interfaz.
+
+![Image: View](assets/images/69-data-visualization.png "View")
+
+Así podemos ver en cualquier momento la forma que va tomando el informe.
+
+![Image: Report](assets/images/70-data-visualization.png "Report")
