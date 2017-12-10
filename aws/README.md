@@ -119,8 +119,10 @@ Las ejecuciones de Glue han sido divididas en diferentes partes contenidas en el
 
 ### Athena
 
-Gracias al servicio de Athena hemos sido capaces de ir realizando queries sobre las tablas de catalogo generadas para ir verificando que los datos generados y fusionados cumplen (más o menos) con los criterios establecidos.
-Un ejemplo utilizado ha sido la query: **SELECT * FROM "superhero-data"."superhero" where name not like '%Identity%' limit 100;**
+- Gracias al servicio de Athena hemos sido capaces de ir realizando queries sobre las tablas de catalogo generadas para ir verificando que los datos generados y fusionados cumplen (más o menos) con los criterios establecidos.
 
+- Un ejemplo utilizado ha sido la query: **SELECT * FROM "superhero-data"."superhero" where name like '%Batman (Bruce Wayne)%';**, con la que hemos podido ver el registro del superheroe Batman.
 
+- Otro ejemplo de consulta ha sido: **SELECT count(*) FROM "superhero-data"."superhero";**, con la que obtenemos el número de registros que hemos generado.
+ 
 ### Quicksight
