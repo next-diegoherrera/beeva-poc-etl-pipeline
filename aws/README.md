@@ -4,13 +4,13 @@
 
 A la hora de realizar un Pipeline de ETL dentro de la plataforma AWS, se han utilizado los siguientes servicios:
 
-- S3: Servicio de almacenamiento de objetos, nos servirá para alojar los datasets de entrada y para almacenar los resultados de la ejecución.
+- **S3**: Servicio de almacenamiento de objetos, nos servirá para alojar los datasets de entrada y para almacenar los resultados de la ejecución.
 
-- AWS Glue: Servicio de extracción, transformación y carga (ETL) que facilita la preparación y carga de los datos para su análisis.
+- **AWS Glue**: Servicio de extracción, transformación y carga (ETL) que facilita la preparación y carga de los datos para su análisis.
 
-- Athena: Servicio para realizar consultas de datos para análisis desde ficheros almacenados en S3.
+- **Athena**: Servicio para realizar consultas de datos para análisis desde ficheros almacenados en S3.
 
-- Quicksight: Servicio para crear paneles de visualización para generar informes.
+- **Quicksight**: Servicio para crear paneles de visualización para generar informes.
 
 ## Contenido
 
