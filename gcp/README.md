@@ -1,6 +1,6 @@
 # ETL sobre GCP
 
-TBD
+![Google Cloud Platform](assets/images/gcp.png "Google Cloud Platform")
 
 ## Contenido
 
